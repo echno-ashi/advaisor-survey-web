@@ -15,8 +15,8 @@ async function apiCall(endpoint, method = "GET", body = null) {
 export const getAllSurveys        = ()           => apiCall("/survey/all", "GET")
 export const getSurveyById        = (survey_id)  => apiCall("/survey/get", "POST", { survey_id })
 export const getStepsBySurvey     = (survey_id)  => apiCall("/survey/steps", "POST", { survey_id })
-export const getQuestionsBySurvey = (survey_id)  => apiCall("/survey/questions", "POST", { survey_id })
-export const getRecommendation    = (session_id)  => apiCall("/survey-recommendation", "POST", { session_id })
+export const getQuestionsBySurvey = ({survey_id, option_id})  => apiCall("/survey/questions", "POST", { survey_id, option_id })
+export const getRecommendation    = ({session_id, agent_name})  => apiCall("/survey-recommendation", "POST", { session_id, agent_name })
 
 // Session
 export const createSession         = (survey_id)                       => apiCall("/survey/session/create", "POST", { survey_id })
@@ -32,3 +32,6 @@ export const getAnswersBySession = (session_id) => apiCall("/survey/answer/all",
 // Trial
 export const saveTrialSignup = (session_id, survey_id, email) =>
   apiCall("/survey/trial/signup", "POST", { session_id, survey_id, email })
+
+export const getSurveyRecommendedAgents = (session_id) =>
+  apiCall("/survey-recommended-agents", "POST", { session_id })

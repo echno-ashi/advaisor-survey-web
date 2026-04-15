@@ -40,6 +40,7 @@ FALLBACK:
 export default function RecommendationPage() {
   const router = useRouter()
   const { id: survey_id, session: session_id_param } = router.query
+  const { agent_name } = router.query
 
   console.log(session_id_param, "session_id")
 
@@ -65,7 +66,11 @@ export default function RecommendationPage() {
     const fetchRecommendation = async () => {
       try {
         // const res = await fetch(`/advaisor/users/survey-recommendation?survey_id=${survey_id}`)
-        const data = await getRecommendation(session_id_param)
+        // const data = await getRecommendation(session_id_param)
+        const data = await getRecommendation({
+  session_id: session_id_param,
+  agent_name: agent_name
+})
         // const data = await res.json()
 
         console.log(data, "recommendation")

@@ -64,7 +64,7 @@ export default function Home() {
     <Layout currentStep={1}>
       <div className="p-6 sm:p-10 max-w-7xl">
         <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">
-          Welcome to AdvAlsor
+          Welcome to AdvAisor
         </p>
         <h1 className="text-3xl sm:text-4xl font-semibold text-gray-900 leading-tight mb-2">
           What brings you here{' '}
