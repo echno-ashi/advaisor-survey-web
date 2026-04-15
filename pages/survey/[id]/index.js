@@ -1107,6 +1107,25 @@ export default function SurveyPage() {
   return selectedOption?.option_name || null
 }
 
+
+const getSelectedAgentOptionId = () => {
+  // Case 1: Agent selection screen (Survey 3)
+  if (recommendedAgents?.length > 0 && selectedAgentOptionId) {
+    return selectedAgentOptionId
+  }
+
+  // Case 2: Static question (Survey 2)
+  const allQuestions = steps?.[0]?.questions || []
+
+  const parentQuestion = allQuestions.find(
+    q => q.question_text === 'Which AI Agent do you want?'
+  )
+
+  if (!parentQuestion) return null
+
+  return answers[parentQuestion.question_id]?.[0] || null
+}
+
   const getDynamicParentQuestionId = (question) => {
     if (question?.question_text === 'What is your primary goal with this agent?') {
       const allQuestions = steps?.[0]?.questions || []
@@ -1353,9 +1372,13 @@ export default function SurveyPage() {
       if (isLastQ) {
         await completeSession(sessionId)
         const agent_name = getSelectedAgentName()
-        // router.push(`/survey/${survey_id}/recommendation?session=${sessionId}`)
-        router.push(
-  `/survey/${survey_id}/recommendation?session=${sessionId}&agent_name=${encodeURIComponent(agent_name || '')}`
+        const option_id = getSelectedAgentOptionId()
+//         router.push(
+//   `/survey/${survey_id}/recommendation?session=${sessionId}&agent_name=${encodeURIComponent(agent_name || '')}`
+// )
+
+router.push(
+  `/survey/${survey_id}/recommendation?session=${sessionId}&agent_name=${encodeURIComponent(agent_name || '')}&option_id=${option_id || ''}`
 )
         return
       }
@@ -1766,9 +1789,13 @@ export default function SurveyPage() {
     if (isLastStep) {
       await completeSession(sessionId)
       const agent_name = getSelectedAgentName()
-      // router.push(`/survey/${survey_id}/recommendation?session=${sessionId}`)
-      router.push(
-  `/survey/${survey_id}/recommendation?session=${sessionId}&agent_name=${encodeURIComponent(agent_name || '')}`
+      const option_id = getSelectedAgentOptionId()
+//       router.push(
+//   `/survey/${survey_id}/recommendation?session=${sessionId}&agent_name=${encodeURIComponent(agent_name || '')}`
+// )
+
+router.push(
+  `/survey/${survey_id}/recommendation?session=${sessionId}&agent_name=${encodeURIComponent(agent_name || '')}&option_id=${option_id || ''}`
 )
       return
     }

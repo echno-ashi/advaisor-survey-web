@@ -16,7 +16,7 @@ export const getAllSurveys        = ()           => apiCall("/survey/all", "GET"
 export const getSurveyById        = (survey_id)  => apiCall("/survey/get", "POST", { survey_id })
 export const getStepsBySurvey     = (survey_id)  => apiCall("/survey/steps", "POST", { survey_id })
 export const getQuestionsBySurvey = ({survey_id, option_id})  => apiCall("/survey/questions", "POST", { survey_id, option_id })
-export const getRecommendation    = ({session_id, agent_name})  => apiCall("/survey-recommendation", "POST", { session_id, agent_name })
+export const getRecommendation    = ({session_id, agent_name, option_id})  => apiCall("/survey-recommendation", "POST", { session_id, agent_name, option_id })
 
 // Session
 export const createSession         = (survey_id)                       => apiCall("/survey/session/create", "POST", { survey_id })

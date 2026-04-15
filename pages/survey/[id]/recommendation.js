@@ -40,7 +40,7 @@ FALLBACK:
 export default function RecommendationPage() {
   const router = useRouter()
   const { id: survey_id, session: session_id_param } = router.query
-  const { agent_name } = router.query
+  const { agent_name, option_id } = router.query
 
   console.log(session_id_param, "session_id")
 
@@ -69,7 +69,8 @@ export default function RecommendationPage() {
         // const data = await getRecommendation(session_id_param)
         const data = await getRecommendation({
   session_id: session_id_param,
-  agent_name: agent_name
+  agent_name: agent_name,
+  option_id: option_id
 })
         // const data = await res.json()
 
@@ -84,7 +85,7 @@ export default function RecommendationPage() {
             highlight:   `${agents.length} agent${agents.length !== 1 ? 's' : ''}`,
             subheadline: 'for you — ranked by impact.',
             subtitle:    'Based on your answers, these agents will deliver the most value, in priority order. Start with Agent 1 and add others as you grow.',
-
+            benefits:  data?.agent_benefits,
             // From API
             agents: agents.map((agent) => ({
               priority:     agent.priority,
@@ -94,7 +95,8 @@ export default function RecommendationPage() {
               description:  agent.reason,            // ← API
               bullets:      agent.points,            // ← API
               conversations: agent.conversations,                     // static (none for now)
-              systemPrompt:  buildSystemPrompt(agent.agent_name), // static template
+              systemPrompt:  data?.prompt, // static template
+               // static template
             })),
           })
         } else {
@@ -194,18 +196,26 @@ export default function RecommendationPage() {
 
   return (
     <Layout currentStep={4}>
-      <div className="min-h-[calc(100vh-53px)]" style={{ background: '#1a1a1a' }}>
-
+      <div
+        className="min-h-[calc(100vh-53px)]"
+        style={{ background: "#1a1a1a" }}
+      >
         {/* ── Header ── */}
         <div className="px-6 sm:px-10 pt-8 pb-6">
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">
             Your Personalised Recommendation
           </p>
           <h1 className="text-2xl sm:text-3xl font-semibold text-white leading-tight">
-            {rec?.headline}{' '}
-            <span style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', color: '#fbbf24' }}>
+            {rec?.headline}{" "}
+            <span
+              style={{
+                fontFamily: "Georgia, serif",
+                fontStyle: "italic",
+                color: "#fbbf24",
+              }}
+            >
               {rec?.highlight}
-            </span>{' '}
+            </span>{" "}
             {rec?.subheadline}
           </h1>
           <p className="text-gray-400 text-sm mt-2 max-w-4xl">
@@ -214,37 +224,70 @@ export default function RecommendationPage() {
         </div>
 
         <div className="px-6 sm:px-10 pb-10 space-y-4 max-w-7xl">
+          {rec?.benefits?.length > 0 && (
+            <div className="rounded-2xl border border-green-200 bg-[#E6F4EE] px-6 py-5">
+              {/* Header */}
+              <p className="text-xs font-semibold text-green-700 uppercase tracking-wider mb-4">
+                Your Estimated Impact
+              </p>
+
+              {/* Benefits List */}
+
+              <ul className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {rec?.benefits?.slice(0, 3)?.map((benefit, index) => (
+                  <li
+                    key={index}
+                    className="flex items-start gap-3 text-sm text-gray-800"
+                  >
+                    <span className="text-green-600">✦</span>
+                    <span>{benefit}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {/* ── Agent cards ── */}
           {rec?.agents?.map((agent, idx) => (
             <div
               key={idx}
               className={`bg-white rounded-2xl overflow-hidden ${
-                agent?.priority > 1 ? 'opacity-90' : ''
+                agent?.priority > 1 ? "opacity-90" : ""
               }`}
             >
               {/* Card header */}
               <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-3 flex-wrap">
-                <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-                  agent?.priority === 1
-                    ? 'bg-gray-900 text-white'
-                    : 'bg-gray-100 text-gray-600 border border-gray-200'
-                }`}>
+                <span
+                  className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+                    agent?.priority === 1
+                      ? "bg-gray-900 text-white"
+                      : "bg-gray-100 text-gray-600 border border-gray-200"
+                  }`}
+                >
                   {agent?.label}
                 </span>
                 <span className="text-xl">{agent?.icon}</span>
-                <span className="font-semibold text-gray-900 text-base">{agent?.title}</span>
+                <span className="font-semibold text-gray-900 text-base">
+                  {agent?.title}
+                </span>
               </div>
 
               {/* Card body */}
               <div className="px-6 py-5">
-                <p className="text-gray-700 text-sm mb-4">{agent?.description}</p>
+                <p className="text-gray-700 text-sm mb-4">
+                  {agent?.description}
+                </p>
 
                 {/* Bullets */}
                 <ul className="space-y-1.5 mb-6">
                   {agent?.bullets?.map((bullet, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
-                      <span className="text-gray-400 mt-0.5 flex-shrink-0">•</span>
+                    <li
+                      key={i}
+                      className="flex items-start gap-2 text-sm text-gray-600"
+                    >
+                      <span className="text-gray-400 mt-0.5 flex-shrink-0">
+                        •
+                      </span>
                       {bullet}
                     </li>
                   ))}
@@ -284,10 +327,12 @@ export default function RecommendationPage() {
                   View your agent's system prompt — generated from your answers
                 </p>
                 <button
-                  onClick={() => setOpenSystemPrompt(openSystemPrompt === idx ? null : idx)}
+                  onClick={() =>
+                    setOpenSystemPrompt(openSystemPrompt === idx ? null : idx)
+                  }
                   className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors whitespace-nowrap"
                 >
-                  {openSystemPrompt === idx ? '− Hide' : '+ Show'}
+                  {openSystemPrompt === idx ? "− Hide" : "+ Show"}
                 </button>
               </div>
               {openSystemPrompt === idx && (
@@ -313,7 +358,9 @@ export default function RecommendationPage() {
                 Yes — start my free trial
               </button>
               <button
-                onClick={() => router.push(`/survey/${survey_id}?session=${sessionId}`)}
+                onClick={() =>
+                  router.push(`/survey/${survey_id}?session=${sessionId}`)
+                }
                 className="flex-1 bg-white border border-gray-200 text-gray-700 py-3 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors"
               >
                 Not quite — let me adjust
@@ -323,23 +370,30 @@ export default function RecommendationPage() {
 
           {/* ── Email — Step 5 ── */}
           {showEmailForm && (
-            <div id="email-section" className="bg-white rounded-2xl p-6 border border-gray-200">
+            <div
+              id="email-section"
+              className="bg-white rounded-2xl p-6 border border-gray-200"
+            >
               {!submitted ? (
                 <>
                   <h3 className="font-semibold text-gray-900 mb-1">
                     Save your agent and start the 14-day free trial
                   </h3>
                   <p className="text-sm text-gray-500 mb-5">
-                    We'll save your configuration. Next step: upload your first knowledge source and your agent is live in 10 minutes.
+                    We'll save your configuration. Next step: upload your first
+                    knowledge source and your agent is live in 10 minutes.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3">
                     <input
                       type="email"
                       value={email}
-                      onChange={(e) => { setEmail(e.target.value); setEmailError('') }}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        setEmailError("");
+                      }}
                       placeholder="your@email.com"
                       className="flex-1 px-4 py-3 rounded-xl border border-gray-200 text-sm outline-none focus:border-gray-400 transition-colors bg-gray-50"
-                      onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
+                      onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
                     />
                     <button
                       onClick={handleSubmit}
@@ -347,9 +401,24 @@ export default function RecommendationPage() {
                       className="bg-gray-900 text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-gray-800 transition-colors whitespace-nowrap disabled:opacity-60 flex items-center gap-2 justify-center"
                     >
                       {submitting && (
-                        <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                        <svg
+                          className="w-4 h-4 animate-spin"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          />
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8v8z"
+                          />
                         </svg>
                       )}
                       Start free trial →
@@ -365,13 +434,25 @@ export default function RecommendationPage() {
               ) : (
                 <div className="text-center py-6">
                   <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    <svg
+                      className="w-6 h-6 text-green-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                   </div>
-                  <h3 className="font-semibold text-gray-900 mb-1">You're in! Check your inbox</h3>
+                  <h3 className="font-semibold text-gray-900 mb-1">
+                    You're in! Check your inbox
+                  </h3>
                   <p className="text-sm text-gray-500">
-                    We've sent a setup link to{' '}
+                    We've sent a setup link to{" "}
                     <span className="font-medium text-gray-700">{email}</span>.
                     Your 14-day free trial starts now.
                   </p>
@@ -382,5 +463,5 @@ export default function RecommendationPage() {
         </div>
       </div>
     </Layout>
-  )
+  );
 }
