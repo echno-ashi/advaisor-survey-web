@@ -338,7 +338,7 @@ export default function RecommendationPage() {
               {openSystemPrompt === idx && (
                 <div className="mx-6 mb-6 bg-gray-900 rounded-xl p-4">
                   <pre className="text-xs text-green-400 font-mono whitespace-pre-wrap leading-relaxed">
-                    {agent.systemPrompt}
+                    {agent?.systemPrompt}
                   </pre>
                 </div>
               )}
