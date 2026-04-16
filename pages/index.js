@@ -36,6 +36,16 @@ export default function Home() {
   const [loading, setLoading]   = useState(true)
   const [starting, setStarting] = useState(null)
 
+  const { email } = router.query
+  
+    useEffect(() => {
+    if (!router.isReady) return
+  
+    if (email) {
+      localStorage.setItem("email", email)
+    }
+  }, [router.isReady, email])
+
   useEffect(() => {
     getAllSurveys().then((res) => {
       if (res.code === 200) setSurveys(res.surveys)

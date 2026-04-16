@@ -42,6 +42,16 @@ export default function RecommendationPage() {
   const { id: survey_id, session: session_id_param } = router.query
   const { agent_name, option_id } = router.query
 
+  const [existingEmail, setExistingEmail] = useState('')
+
+  useEffect(() => {
+  const email = localStorage.getItem("email")
+  if (email) {
+    setExistingEmail(email)
+  }
+}, [])
+
+
   console.log(session_id_param, "session_id")
 
   const [openSystemPrompt, setOpenSystemPrompt] = useState(null) // agent index or null
@@ -112,12 +122,34 @@ export default function RecommendationPage() {
     fetchRecommendation()
   }, [session_id_param])
 
-  const handleStartTrial = () => {
-    setShowEmailForm(true)
-    setTimeout(() => {
-      document.getElementById("email-section")?.scrollIntoView({ behavior: "smooth" })
-    }, 100)
+  // const handleStartTrial = () => {
+  //   setShowEmailForm(true)
+  //   setTimeout(() => {
+  //     document.getElementById("email-section")?.scrollIntoView({ behavior: "smooth" })
+  //   }, 100)
+  // }
+
+
+  const handleStartTrial = async() => {
+  // ✅ If email already exists → skip input
+  if (existingEmail) {
+    await saveTrialSignup(sessionId, survey_id, existingEmail)
+    window.location.href = "http://myadvaisor.com:4002/create-package";
+    localStorage.removeItem("email");
+    return;
   }
+
+  
+
+  // ❌ else normal flow
+  setShowEmailForm(true);
+
+  setTimeout(() => {
+    document
+      .getElementById("email-section")
+      ?.scrollIntoView({ behavior: "smooth" });
+  }, 100);
+};
 
   const handleSubmit = async () => {
     setEmailError('')
@@ -346,7 +378,7 @@ export default function RecommendationPage() {
           ))}
 
           {/* ── CTA ── */}
-          <div className="bg-amber-50 border border-amber-100 rounded-2xl p-6">
+          {!existingEmail && <div className="bg-amber-50 border border-amber-100 rounded-2xl p-6">
             <p className="font-semibold text-gray-900 mb-4">
               Does this recommendation feel right for your business?
             </p>
@@ -366,10 +398,10 @@ export default function RecommendationPage() {
                 Not quite — let me adjust
               </button>
             </div>
-          </div>
+          </div>}
 
           {/* ── Email — Step 5 ── */}
-          {showEmailForm && (
+          {/* {showEmailForm && (
             <div
               id="email-section"
               className="bg-white rounded-2xl p-6 border border-gray-200"
@@ -459,7 +491,91 @@ export default function RecommendationPage() {
                 </div>
               )}
             </div>
-          )}
+          )} */}
+
+          (
+  <div
+    id="email-section"
+    className="bg-white rounded-2xl p-6 border border-gray-200"
+  >
+    {/* ✅ CASE 1: Email already exists */}
+    {existingEmail ? (
+      <div className="text-center">
+        <h3 className="font-semibold text-gray-900 mb-2">
+          Continue setup
+        </h3>
+        <p className="text-sm text-gray-500 mb-5">
+          You're already signed in as{" "}
+          <span className="font-medium text-gray-700">
+            {existingEmail}
+          </span>
+        </p>
+
+        <button
+        onClick={handleStartTrial}
+          // onClick={() =>
+          //   (window.location.href =
+          //     "http://localhost:5173/create-package")
+          // }
+          className="w-full bg-gray-900 text-white py-3 rounded-xl text-sm font-semibold hover:bg-gray-800 transition"
+        >
+          Continue →
+        </button>
+      </div>
+    ) : (
+      <>
+        {/* EXISTING EMAIL INPUT FLOW (UNCHANGED) */}
+        {showEmailForm && !submitted ? (
+          <>
+            <h3 className="font-semibold text-gray-900 mb-1">
+              Save your agent and start the 14-day free trial
+            </h3>
+            <p className="text-sm text-gray-500 mb-5">
+              We'll save your configuration. Next step: upload your first
+              knowledge source and your agent is live in 10 minutes.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setEmailError("");
+                }}
+                placeholder="your@email.com"
+                className="flex-1 px-4 py-3 rounded-xl border border-gray-200 text-sm outline-none focus:border-gray-400 transition-colors bg-gray-50"
+                onKeyDown={(e) =>
+                  e.key === "Enter" && handleSubmit()
+                }
+              />
+
+              <button
+                onClick={handleSubmit}
+                disabled={submitting}
+                className="bg-gray-900 text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-gray-800 transition disabled:opacity-60"
+              >
+                Start free trial →
+              </button>
+            </div>
+
+            {emailError && (
+              <p className="text-xs text-red-500 mt-2">
+                {emailError}
+              </p>
+            )}
+          </>
+        ) : (
+          <div className="text-center py-6">
+            <h3 className="font-semibold text-gray-900 mb-1">
+              You're in! Check your inbox
+            </h3>
+          </div>
+        )}
+      </>
+    )}
+  </div>
+)
         </div>
       </div>
     </Layout>

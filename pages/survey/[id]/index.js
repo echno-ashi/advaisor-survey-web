@@ -1050,6 +1050,7 @@ import {
 export default function SurveyPage() {
   const router = useRouter()
   const { id: survey_id, session: session_id_param } = router.query
+  
 
   const [steps, setSteps] = useState([])
   const [originalSteps, setOriginalSteps] = useState([])
