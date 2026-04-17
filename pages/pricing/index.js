@@ -160,10 +160,10 @@ export default function PricingPage() {
             <Link href="/" className="text-sm text-slate-600 hover:text-slate-900 transition">
               Home
             </Link>
-            <Link href="#" className="text-sm text-slate-600 hover:text-slate-900 transition">
+            <Link href="/use-cases" className="text-sm text-slate-600 hover:text-slate-900 transition">
               Use Cases
             </Link>
-            <Link href="#" className="text-sm text-slate-600 hover:text-slate-900 transition">
+            <Link href="/how-it-works" className="text-sm text-slate-600 hover:text-slate-900 transition">
               How It Works
             </Link>
             <Link href="/pricing" className="text-sm text-amber-600 font-semibold">
@@ -655,8 +655,8 @@ export default function PricingPage() {
               <ul className="space-y-2 text-sm text-gray-400">
                 <li><Link href="/" className="hover:text-white transition">Home</Link></li>
                 <li><Link href="/pricing" className="hover:text-white transition">Pricing</Link></li>
-                <li><Link href="#" className="hover:text-white transition">Use Cases</Link></li>
-                <li><Link href="#" className="hover:text-white transition">How It Works</Link></li>
+                <li><Link href="/use-cases" className="hover:text-white transition">Use Cases</Link></li>
+                <li><Link href="/how-it-works" className="hover:text-white transition">How It Works</Link></li>
               </ul>
             </div>
 
