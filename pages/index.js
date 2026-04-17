@@ -155,10 +155,10 @@ export default function HomePage() {
             <Link href="/" className="text-sm text-slate-600 hover:text-slate-900 transition">
               Home
             </Link>
-            <Link href="#" className="text-sm text-slate-600 hover:text-slate-900 transition">
+            <Link href="/use-cases" className="text-sm text-slate-600 hover:text-slate-900 transition">
               Use Cases
             </Link>
-            <Link href="#" className="text-sm text-slate-600 hover:text-slate-900 transition">
+            <Link href="/how-it-works" className="text-sm text-slate-600 hover:text-slate-900 transition">
               How It Works
             </Link>
             <Link href="/pricing" className="text-sm text-slate-600 hover:text-slate-900 transition">
@@ -191,10 +191,10 @@ export default function HomePage() {
               <Link href="/" className="text-sm text-slate-600 hover:text-slate-900">
                 Home
               </Link>
-              <Link href="#" className="text-sm text-slate-600 hover:text-slate-900">
+              <Link href="/use-cases" className="text-sm text-slate-600 hover:text-slate-900">
                 Use Cases
               </Link>
-              <Link href="#" className="text-sm text-slate-600 hover:text-slate-900">
+              <Link href="/how-it-works" className="text-sm text-slate-600 hover:text-slate-900">
                 How It Works
               </Link>
               <Link href="/pricing" className="text-sm text-slate-600 hover:text-slate-900">
