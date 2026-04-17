@@ -1,5 +1,5 @@
 import { Fraunces, DM_Sans, DM_Mono } from 'next/font/google';
-import './globals.css';
+// import './globals.css';
 
 const fraunces = Fraunces({
   variable: '--font-serif',
